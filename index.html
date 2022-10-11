@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ch">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    // 1、数据不存在
+    // 2、要打开的数据库比本地数据库版本高
+    // 新创建和版本更新都可认为创建了一个全新的数据库
+    // 3、要打开的数据库比本地数据库版本低
+    const request = indexedDB.open('myTestDb')
+    request.onupgradeneeded = (event)=>{
+        const db = event.target.result
+        const objectStore = db.createObjectStore("customer", { autoIncrement : true });
+        objectStore.transaction.oncomplete = ()=>{
+            const customerObjectStore  = db.transaction("customer", "readwrite").objectStore("customer");
+            const data = [
+                'zhangsan',
+                'lisi',
+                "wangwu"
+            ]
+            data.forEach((item)=>{
+                customerObjectStore.add(item)
+            })
+        }
+    }
+    request.onsuccess = (event)=>{
+        console.log('onsuccess')
+        const db = event.target.result
+    }
+</script>
+</body>
+</html>
